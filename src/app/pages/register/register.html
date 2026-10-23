@@ -1,0 +1,30 @@
+<section class="narrow">
+  <h1>Crear cuenta</h1>
+  <app-alert kind="error" [message]="error()" />
+  <form ngNativeValidate (ngSubmit)="onSubmit()" class="form box">
+    <label>
+      Nombre
+      <input name="name" required minlength="3" maxlength="150" [(ngModel)]="name" />
+    </label>
+    <label>
+      Email
+      <input type="email" name="email" required maxlength="150" [(ngModel)]="email" />
+    </label>
+    <label>
+      Contraseña (mínimo 8 caracteres)
+      <input type="password" name="password" required minlength="8" [(ngModel)]="password" />
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="isAdmin" [(ngModel)]="isAdmin" />
+      Crear como administrador
+    </label>
+    @if (isAdmin()) {
+      <label>
+        Clave secreta de administrador (ADMIN_SECRET_KEY)
+        <input type="password" name="secretKey" required [(ngModel)]="secretKey" />
+      </label>
+    }
+    <button [disabled]="loading()">{{ loading() ? 'Creando…' : 'Crear cuenta' }}</button>
+  </form>
+  <p>¿Ya tenés cuenta? <a routerLink="/login">Ingresá</a></p>
+</section>

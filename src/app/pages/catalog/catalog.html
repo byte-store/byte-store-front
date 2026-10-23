@@ -1,0 +1,47 @@
+<section>
+  <h1>Catálogo</h1>
+  <input
+    type="search"
+    placeholder="Buscar por marca, modelo…"
+    [value]="search()"
+    (input)="search.set($any($event.target).value)"
+  />
+
+  <app-alert kind="error" [message]="error()" />
+  <app-alert kind="success" [message]="notice()" />
+
+  @if (loading()) {
+    <p>Cargando productos…</p>
+  } @else if (filtered().length === 0) {
+    <p>No hay productos para mostrar.</p>
+  } @else {
+    <div class="grid">
+      @for (p of filtered(); track p.id) {
+        <div class="box">
+          @if (p.imageUrl) {
+            <img [src]="p.imageUrl" [alt]="p.model" (error)="hideImage($event)" />
+          }
+          <div class="muted">{{ p.brand }}</div>
+          <h3>{{ p.model }}</h3>
+          @if (p.description) {
+            <p class="muted">{{ p.description }}</p>
+          }
+          <p>
+            <strong>{{ formatPrice(p.price) }}</strong> —
+            {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Sin stock' }}
+          </p>
+          <div class="row">
+            <input
+              type="number"
+              min="1"
+              class="qty"
+              [value]="quantity(p)"
+              (input)="setQuantity(p, $any($event.target).value)"
+            />
+            <button [disabled]="p.stock === 0" (click)="addToCart(p)">Agregar al carrito</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>
