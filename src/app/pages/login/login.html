@@ -1,0 +1,17 @@
+<section class="narrow">
+  <h1>Ingresar</h1>
+  <app-alert kind="error" [message]="error()" />
+  <!-- ngNativeValidate mantiene la validación del navegador (required, type=email) -->
+  <form ngNativeValidate (ngSubmit)="onSubmit()" class="form box">
+    <label>
+      Email
+      <input type="email" name="email" required [(ngModel)]="email" />
+    </label>
+    <label>
+      Contraseña
+      <input type="password" name="password" required [(ngModel)]="password" />
+    </label>
+    <button [disabled]="loading()">{{ loading() ? 'Ingresando…' : 'Ingresar' }}</button>
+  </form>
+  <p>¿No tenés cuenta? <a routerLink="/registro">Registrate</a></p>
+</section>

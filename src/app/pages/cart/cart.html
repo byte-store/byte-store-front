@@ -1,0 +1,46 @@
+@if (loading()) {
+  <p>Cargando carrito…</p>
+} @else {
+  <section>
+    <h1>Mi carrito</h1>
+    <app-alert kind="error" [message]="error()" />
+
+    @if (items().length === 0) {
+      <p>Tu carrito está vacío. <a routerLink="/">Ver catálogo</a></p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            @let p = productsById().get(item.productId);
+            <tr>
+              <td>{{ p ? p.brand + ' ' + p.model : 'Producto #' + item.productId }}</td>
+              <td>{{ p ? formatPrice(p.price) : '—' }}</td>
+              <td>
+                <input
+                  type="number"
+                  class="qty"
+                  min="1"
+                  [value]="item.quantity"
+                  (blur)="updateQuantity(item, $any($event.target).value)"
+                />
+              </td>
+              <td>{{ p ? formatPrice(p.price * item.quantity) : '—' }}</td>
+              <td><button (click)="remove(item)">Quitar</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <p class="total">Total: {{ formatPrice(total()) }}</p>
+      <button class="danger" (click)="clear()">Vaciar carrito</button>
+    }
+  </section>
+}

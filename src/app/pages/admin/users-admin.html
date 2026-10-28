@@ -1,0 +1,33 @@
+<app-alert kind="error" [message]="error()" />
+<app-alert kind="success" [message]="notice()" />
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Email</th>
+      <th>Rol</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (u of users(); track u.id) {
+      <!-- No dejamos que el admin se cambie el rol o se borre a sí mismo desde acá -->
+      @let isMe = u.id === auth.session()?.id;
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.name }}{{ isMe ? ' (vos)' : '' }}</td>
+        <td>{{ u.email }}</td>
+        <td>
+          <select #role [value]="u.role" [disabled]="isMe" (change)="changeRole(u, role)">
+            <option value="user">user</option>
+            <option value="admin">admin</option>
+          </select>
+        </td>
+        <td>
+          <button class="danger" [disabled]="isMe" (click)="onDelete(u)">Eliminar</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

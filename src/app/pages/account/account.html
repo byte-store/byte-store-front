@@ -1,0 +1,40 @@
+@if (user(); as user) {
+  <section class="narrow">
+    <h1>Mi cuenta</h1>
+    <p class="muted">Rol: {{ user.role }}</p>
+    <app-alert kind="error" [message]="error()" />
+    <app-alert kind="success" [message]="notice()" />
+
+    <form ngNativeValidate (ngSubmit)="onSubmit()" class="form box">
+      <label>
+        Nombre
+        <input name="name" required minlength="3" maxlength="150" [(ngModel)]="name" />
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" required maxlength="150" [(ngModel)]="email" />
+      </label>
+      <label>
+        Nueva contraseña
+        <input
+          type="password"
+          name="password"
+          minlength="8"
+          placeholder="Dejar vacío para no cambiarla"
+          [(ngModel)]="password"
+        />
+      </label>
+      <button>Guardar cambios</button>
+    </form>
+
+    <div class="box">
+      <h3>Eliminar cuenta</h3>
+      <p class="muted">Se borran tus datos y tu carrito.</p>
+      <button class="danger" (click)="onDelete()">Eliminar mi cuenta</button>
+    </div>
+  </section>
+} @else if (error()) {
+  <app-alert kind="error" [message]="error()" />
+} @else {
+  <p>Cargando…</p>
+}

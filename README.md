@@ -1,59 +1,44 @@
-# ByteStoreFront
+# ByteStore - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.27.
+Frontend en Angular 21 para la API de ByteStore (`../byte-store`).
 
-## Development server
+## Uso
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Levantar el back (en la carpeta `byte-store`): `npm run dev` (puerto 3000 por defecto).
+2. En otra terminal, en esta carpeta:
 
 ```bash
-ng generate component component-name
+npm install
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. Abrir http://localhost:4200
 
-```bash
-ng generate --help
+El back no tiene CORS habilitado, por eso `ng serve` hace de proxy (ver `proxy.conf.mjs`):
+todas las requests a `/api` se reenvían a `http://localhost:3000`. Si el back corre en otro
+puerto, en PowerShell:
+
+```powershell
+$env:BACKEND_URL="http://localhost:4000"; npm start
 ```
 
-## Building
+## Funcionalidades
 
-To build the project run:
+- **Catálogo** (público): listado y búsqueda de productos.
+- **Registro / Login**: crea usuarios comunes o admins (con la `ADMIN_SECRET_KEY` del back).
+- **Carrito**: agregar, cambiar cantidad, quitar y vaciar.
+- **Mi cuenta**: editar nombre, email y contraseña; eliminar la cuenta.
+- **Admin**: crear y eliminar productos, ver usuarios, cambiar roles y eliminarlos.
 
-```bash
-ng build
-```
+## Estructura
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- `src/app/core/`: cliente de la API (`api.ts`), sesión con JWT (`auth.ts`), interceptor que
+  agrega el token y guards de rutas.
+- `src/app/pages/`: una carpeta por pantalla.
+- `src/app/shared/`: componentes reutilizables.
 
-## Running unit tests
+## Scripts
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `npm start`: servidor de desarrollo.
+- `npm run build`: build de producción en `dist/`.
+- `npm test`: tests unitarios con Vitest.
