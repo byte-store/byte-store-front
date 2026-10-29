@@ -48,6 +48,22 @@ export interface Cart {
   items: CartItem[];
 }
 
+export interface OrderItem {
+  id: number;
+  orderId: number;
+  productId: number;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface Order {
+  id: number;
+  userId: number;
+  totalAmount: number;
+  status: 'COMPLETED' | 'CANCELLED';
+  createdAt: string;
+  items: OrderItem[];
+}
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -137,6 +153,11 @@ export class ApiService {
   }
   clearCart(userId: number) {
     return this.request<Cart>('DELETE', `/carts/${userId}/items`);
+  }
+  
+  // Órdenes
+  checkout() {
+    return this.request<Order>('POST', '/orders');
   }
 }
 
