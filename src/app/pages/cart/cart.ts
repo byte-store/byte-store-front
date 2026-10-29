@@ -18,7 +18,11 @@ export class CartPage implements OnInit {
   protected readonly cart = signal<Cart | null>(null);
   protected readonly products = signal<Product[]>([]);
   protected readonly error = signal('');
+  protected readonly notice = signal('');
   protected readonly loading = signal(true);
+  protected readonly buying = signal(false);
+
+  private pending: Promise<void> = Promise.resolve();
 
   protected readonly productsById = computed(() => new Map(this.products().map((p) => [p.id, p])));
   protected readonly items = computed(() => this.cart()?.items ?? []);
@@ -45,13 +49,17 @@ export class CartPage implements OnInit {
     }
   }
 
-  private async run(action: () => Promise<Cart>) {
+  private run(action: () => Promise<Cart>): Promise<void> {
     this.error.set('');
-    try {
-      this.cart.set(await action());
-    } catch (e) {
-      this.error.set(errorMessage(e));
-    }
+    this.notice.set('');
+    this.pending = this.pending.then(async () => {
+      try {
+        this.cart.set(await action());
+      } catch (e) {
+        this.error.set(errorMessage(e));
+      }
+    });
+    return this.pending;
   }
 
   protected updateQuantity(item: CartItem, value: string) {
@@ -67,5 +75,26 @@ export class CartPage implements OnInit {
 
   protected clear() {
     if (confirm('¿Vaciar el carrito?')) this.run(() => this.api.clearCart(this.userId));
+  }
+
+  protected async checkout() {
+    this.buying.set(true);
+    try {
+      await this.pending;
+      if (this.items().length === 0) return;
+      if (!confirm(`¿Confirmar la compra por ${formatPrice(this.total())}?`)) return;
+
+      this.error.set('');
+      this.notice.set('');
+      const order = await this.api.checkout();
+      this.cart.set({ userId: this.userId, items: [] });
+      this.notice.set(
+        `¡Compra confirmada! Orden #${order.id} por ${formatPrice(order.totalAmount)}`,
+      );
+    } catch (e) {
+      this.error.set(errorMessage(e));
+    } finally {
+      this.buying.set(false);
+    }
   }
 }
