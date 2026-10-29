@@ -138,7 +138,11 @@ export class ApiService {
 }
 
 export function formatPrice(n: number): string {
-  return n.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+  return n.toLocaleString('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+  });
 }
 
 export function errorMessage(e: unknown): string {

@@ -1,11 +1,13 @@
 <section>
-  <h1>Catálogo</h1>
-  <input
-    type="search"
-    placeholder="Buscar por marca, modelo…"
-    [value]="search()"
-    (input)="search.set($any($event.target).value)"
-  />
+  <div class="page-head">
+    <h1>Catálogo</h1>
+    <input
+      type="search"
+      placeholder="Buscar por marca, modelo…"
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+  </div>
 
   <app-alert kind="error" [message]="error()" />
   <app-alert kind="success" [message]="notice()" />
@@ -18,7 +20,6 @@
     <div class="grid">
       @for (p of filtered(); track p.id) {
         <div class="box">
-          <!-- Si no hay imagen (o no carga) queda visible la marca de fondo -->
           <div class="thumb">
             {{ p.brand }}
             @if (p.imageUrl) {

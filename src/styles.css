@@ -30,7 +30,6 @@ h3 { font-size: 1.25rem; line-height: 1.2; font-weight: 600; margin: 0 0 8px; }
 a { color: var(--ink-soft); text-underline-offset: 3px; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-/* Barra superior */
 .navbar {
   position: sticky;
   top: 0;
@@ -75,7 +74,6 @@ a { color: var(--ink-soft); text-underline-offset: 3px; }
 
 main { display: block; max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
 
-/* Botones */
 button {
   font: inherit;
   font-weight: 600;
@@ -98,7 +96,6 @@ button.secondary:hover:not(:disabled) { background: transparent; border-color: v
 .navbar button { background: transparent; border-color: #5a6788; }
 .navbar button:hover:not(:disabled) { background: transparent; border-color: #fff; }
 
-/* Formularios */
 input, select, textarea {
   font: inherit;
   font-weight: 400;
@@ -124,7 +121,6 @@ input[type="search"] { max-width: 420px; }
 .form h3 { margin: 0; }
 .form button { align-self: flex-start; }
 
-/* Bloques generales */
 .box {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -146,7 +142,6 @@ input[type="search"] { max-width: 420px; }
 .alert-error { background: #fbeceb; color: #8f231b; border-color: #e9b7b3; border-left-color: var(--danger); }
 .alert-success { background: #e7f4ec; color: #165a34; border-color: #b5dbc4; border-left-color: var(--ok); }
 
-/* Etiqueta de precio */
 .price {
   display: inline-block;
   padding: 2px 12px 2px 18px;
@@ -159,7 +154,15 @@ input[type="search"] { max-width: 420px; }
   clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
 }
 
-/* Catálogo */
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 8px;
+}
+.page-head h1 { margin: 0; }
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -203,7 +206,6 @@ input[type="search"] { max-width: 420px; }
 .stock.out { color: var(--danger); font-weight: 600; }
 .grid .row button { flex: 1; }
 
-/* Tablas */
 table {
   width: 100%;
   border-collapse: separate;
@@ -230,14 +232,13 @@ td select { width: auto; }
 }
 .total .price { font-size: 1.6rem; }
 
-/* Alta de producto en dos columnas */
 app-products-admin .form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
 app-products-admin .form > h3,
 app-products-admin .form > label:has(textarea),
+app-products-admin .form > .row,
 app-products-admin .form > button { grid-column: 1 / -1; }
 app-products-admin .form > button { justify-self: start; }
 
-/* Pestañas del panel de admin */
 .tabs {
   display: inline-flex;
   gap: 4px;

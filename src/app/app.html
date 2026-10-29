@@ -9,7 +9,7 @@
       @if (session.role === 'admin') {
         <a routerLink="/admin" routerLinkActive="active">Admin</a>
       }
-      <a routerLink="/cuenta" routerLinkActive="active">Mi cuenta ({{ session.email }})</a>
+      <a routerLink="/cuenta" routerLinkActive="active">Mi cuenta</a>
       <button (click)="logout()">Salir</button>
     } @else {
       <a routerLink="/login" routerLinkActive="active">Ingresar</a>
