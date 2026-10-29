@@ -16,6 +16,8 @@ export class ProductsAdmin implements OnInit {
   protected readonly error = signal('');
   protected readonly notice = signal('');
 
+  protected readonly editingId = signal<number | null>(null);
+
   // Campos del formulario de alta. Los numéricos quedan en null cuando están vacíos.
   protected readonly brand = signal('');
   protected readonly model = signal('');
@@ -33,7 +35,8 @@ export class ProductsAdmin implements OnInit {
     }
   }
 
-  private resetForm() {
+  protected resetForm() {
+    this.editingId.set(null);
     this.brand.set('');
     this.model.set('');
     this.description.set('');
@@ -43,22 +46,44 @@ export class ProductsAdmin implements OnInit {
     this.categoryId.set(null);
   }
 
-  protected async onCreate() {
+  protected onEdit(p: Product) {
     this.error.set('');
     this.notice.set('');
+    this.editingId.set(p.id);
+    this.brand.set(p.brand);
+    this.model.set(p.model);
+    this.description.set(p.description ?? '');
+    this.price.set(p.price);
+    this.stock.set(p.stock);
+    this.imageUrl.set(p.imageUrl ?? '');
+    this.categoryId.set(p.categoryId);
+    window.scrollTo({ top: 0 });
+  }
+
+  protected async onSubmit() {
+    this.error.set('');
+    this.notice.set('');
+    const data = {
+      brand: this.brand().trim(),
+      model: this.model().trim(),
+      description: this.description().trim() || null,
+      price: Number(this.price()),
+      stock: Number(this.stock()),
+      imageUrl: this.imageUrl().trim() || null,
+      categoryId: this.categoryId() ?? null,
+    };
+    const id = this.editingId();
     try {
-      const product = await this.api.createProduct({
-        brand: this.brand().trim(),
-        model: this.model().trim(),
-        description: this.description().trim() || null,
-        price: Number(this.price()),
-        stock: Number(this.stock()),
-        imageUrl: this.imageUrl().trim() || null,
-        categoryId: this.categoryId() ?? null,
-      });
-      this.products.update((list) => [product, ...list]);
+      if (id === null) {
+        const product = await this.api.createProduct(data);
+        this.products.update((list) => [product, ...list]);
+        this.notice.set(`Producto "${product.brand} ${product.model}" creado`);
+      } else {
+        const product = await this.api.updateProduct(id, data);
+        this.products.update((list) => list.map((x) => (x.id === id ? product : x)));
+        this.notice.set(`Producto "${product.brand} ${product.model}" actualizado`);
+      }
       this.resetForm();
-      this.notice.set(`Producto "${product.brand} ${product.model}" creado`);
     } catch (e) {
       this.error.set(errorMessage(e));
     }
@@ -71,6 +96,7 @@ export class ProductsAdmin implements OnInit {
     try {
       await this.api.deleteProduct(p.id);
       this.products.update((list) => list.filter((x) => x.id !== p.id));
+      if (this.editingId() === p.id) this.resetForm();
       this.notice.set('Producto eliminado');
     } catch (e) {
       this.error.set(errorMessage(e));

@@ -115,6 +115,9 @@ export class ApiService {
   createProduct(data: CreateProductDto) {
     return this.request<Product>('POST', '/products', data);
   }
+  updateProduct(id: number, data: Partial<CreateProductDto>) {
+    return this.request<Product>('PUT', `/products/${id}`, data);
+  }
   deleteProduct(id: number) {
     return this.request<{ message: string; product: Product }>('DELETE', `/products/${id}`);
   }
