@@ -34,12 +34,12 @@
                 />
               </td>
               <td>{{ p ? formatPrice(p.price * item.quantity) : '—' }}</td>
-              <td><button (click)="remove(item)">Quitar</button></td>
+              <td><button class="secondary" (click)="remove(item)">Quitar</button></td>
             </tr>
           }
         </tbody>
       </table>
-      <p class="total">Total: {{ formatPrice(total()) }}</p>
+      <p class="total">Total <span class="price">{{ formatPrice(total()) }}</span></p>
       <button class="danger" (click)="clear()">Vaciar carrito</button>
     }
   </section>

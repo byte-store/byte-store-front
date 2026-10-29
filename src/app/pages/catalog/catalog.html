@@ -1,11 +1,13 @@
 <section>
-  <h1>Catálogo</h1>
-  <input
-    type="search"
-    placeholder="Buscar por marca, modelo…"
-    [value]="search()"
-    (input)="search.set($any($event.target).value)"
-  />
+  <div class="page-head">
+    <h1>Catálogo</h1>
+    <input
+      type="search"
+      placeholder="Buscar por marca, modelo…"
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+  </div>
 
   <app-alert kind="error" [message]="error()" />
   <app-alert kind="success" [message]="notice()" />
@@ -18,17 +20,22 @@
     <div class="grid">
       @for (p of filtered(); track p.id) {
         <div class="box">
-          @if (p.imageUrl) {
-            <img [src]="p.imageUrl" [alt]="p.model" (error)="hideImage($event)" />
-          }
+          <div class="thumb">
+            {{ p.brand }}
+            @if (p.imageUrl) {
+              <img [src]="p.imageUrl" [alt]="p.model" (error)="hideImage($event)" />
+            }
+          </div>
           <div class="muted">{{ p.brand }}</div>
           <h3>{{ p.model }}</h3>
           @if (p.description) {
-            <p class="muted">{{ p.description }}</p>
+            <p class="muted desc">{{ p.description }}</p>
           }
-          <p>
-            <strong>{{ formatPrice(p.price) }}</strong> —
-            {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Sin stock' }}
+          <p class="price-line">
+            <span class="price">{{ formatPrice(p.price) }}</span>
+            <span class="stock" [class.out]="p.stock === 0">
+              {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Sin stock' }}
+            </span>
           </p>
           <div class="row">
             <input
