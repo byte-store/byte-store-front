@@ -4,6 +4,7 @@
   <section>
     <h1>Mi carrito</h1>
     <app-alert kind="error" [message]="error()" />
+    <app-alert kind="success" [message]="notice()" />
 
     @if (items().length === 0) {
       <p>Tu carrito está vacío. <a routerLink="/">Ver catálogo</a></p>
@@ -40,7 +41,12 @@
         </tbody>
       </table>
       <p class="total">Total <span class="price">{{ formatPrice(total()) }}</span></p>
-      <button class="danger" (click)="clear()">Vaciar carrito</button>
+      <div class="cart-actions">
+        <button class="danger" [disabled]="buying()" (click)="clear()">Vaciar carrito</button>
+        <button [disabled]="buying()" (click)="checkout()">
+          {{ buying() ? 'Procesando…' : 'Comprar' }}
+        </button>
+      </div>
     }
   </section>
 }
