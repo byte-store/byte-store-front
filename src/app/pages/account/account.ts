@@ -1,13 +1,21 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ApiService, errorMessage, User } from '../../core/api';
+import { Router, RouterLink } from '@angular/router';
+import {
+  ApiService,
+  errorMessage,
+  formatDate,
+  formatPrice,
+  OrderWithProducts,
+  PAYMENT_METHOD_LABELS,
+  User,
+} from '../../core/api';
 import { AuthService } from '../../core/auth';
 import { Alert } from '../../shared/alert';
 
 @Component({
   selector: 'app-account-page',
-  imports: [FormsModule, Alert],
+  imports: [FormsModule, RouterLink, Alert],
   templateUrl: './account.html',
 })
 export class AccountPage implements OnInit {
@@ -24,12 +32,37 @@ export class AccountPage implements OnInit {
   protected readonly error = signal('');
   protected readonly notice = signal('');
 
+  protected readonly formatPrice = formatPrice;
+  protected readonly formatDate = formatDate;
+  protected readonly paymentLabels = PAYMENT_METHOD_LABELS;
+  protected readonly orders = signal<OrderWithProducts[]>([]);
+  protected readonly ordersLoading = signal(true);
+  protected readonly ordersError = signal('');
+
   async ngOnInit() {
+    await Promise.all([this.loadUser(), this.loadOrders()]);
+  }
+
+  private async loadUser() {
     try {
       this.setUser(await this.api.getUser(this.userId));
     } catch (e) {
       this.error.set(errorMessage(e));
     }
+  }
+
+  private async loadOrders() {
+    try {
+      this.orders.set(await this.api.getMyOrders());
+    } catch (e) {
+      this.ordersError.set(errorMessage(e));
+    } finally {
+      this.ordersLoading.set(false);
+    }
+  }
+
+  protected units(order: OrderWithProducts): number {
+    return order.items.reduce((n, item) => n + item.quantity, 0);
   }
 
   private setUser(u: User) {
