@@ -4,43 +4,109 @@
   <section>
     <h1>Mi carrito</h1>
     <app-alert kind="error" [message]="error()" />
+    <app-alert kind="success" [message]="notice()" />
 
     @if (items().length === 0) {
-      <p>Tu carrito está vacío. <a routerLink="/">Ver catálogo</a></p>
+      <div class="cart-empty">
+        <p>Tu carrito está vacío.</p>
+        <a routerLink="/">Ir al catálogo</a>
+      </div>
     } @else {
-      <table>
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+      <div class="cart-layout">
+        <div class="cart-list">
           @for (item of items(); track item.id) {
             @let p = productsById().get(item.productId);
-            <tr>
-              <td>{{ p ? p.brand + ' ' + p.model : 'Producto #' + item.productId }}</td>
-              <td>{{ p ? formatPrice(p.price) : '—' }}</td>
-              <td>
+            <article class="cart-item">
+              <div class="cart-thumb" aria-hidden="true">
+                {{ p?.brand?.charAt(0) ?? '' }}
+                @if (p?.imageUrl) {
+                  <img [src]="p!.imageUrl" [alt]="p!.model" (error)="hideImage($event)" />
+                }
+              </div>
+
+              <div class="cart-info">
+                <span class="muted">{{ p?.brand }}</span>
+                <h3>{{ p ? p.model : 'Producto #' + item.productId }}</h3>
+                <span class="muted unit">{{ p ? formatPrice(p.price) + ' c/u' : '—' }}</span>
+                @if (shortage(item); as stock) {
+                  <span class="shortage">
+                    {{ stock === 0 ? 'Sin stock disponible' : 'Quedan solo ' + stock + ' unidades' }}
+                  </span>
+                }
+                <button class="link-btn" (click)="remove(item)">Quitar</button>
+              </div>
+
+              <div class="stepper">
+                <button
+                  type="button"
+                  [disabled]="item.quantity <= 1 || buying()"
+                  [attr.aria-label]="'Restar una unidad de ' + (p?.model ?? 'este producto')"
+                  (click)="step(item, -1)"
+                >
+                  −
+                </button>
                 <input
                   type="number"
-                  class="qty"
                   min="1"
                   [value]="item.quantity"
-                  (blur)="updateQuantity(item, $any($event.target).value)"
+                  [attr.aria-label]="'Cantidad de ' + (p?.model ?? 'este producto')"
+                  (blur)="updateQuantity(item, $any($event.target))"
+                  (keydown.enter)="$any($event.target).blur()"
                 />
-              </td>
-              <td>{{ p ? formatPrice(p.price * item.quantity) : '—' }}</td>
-              <td><button class="secondary" (click)="remove(item)">Quitar</button></td>
-            </tr>
+                <button
+                  type="button"
+                  [disabled]="buying()"
+                  [attr.aria-label]="'Sumar una unidad de ' + (p?.model ?? 'este producto')"
+                  (click)="step(item, 1)"
+                >
+                  +
+                </button>
+              </div>
+
+              <div class="cart-subtotal">{{ p ? formatPrice(p.price * item.quantity) : '—' }}</div>
+            </article>
           }
-        </tbody>
-      </table>
-      <p class="total">Total <span class="price">{{ formatPrice(total()) }}</span></p>
-      <button class="danger" (click)="clear()">Vaciar carrito</button>
+          <div class="cart-list-foot">
+            <button class="link-btn danger-text" [disabled]="buying()" (click)="clear()">
+              Vaciar carrito
+            </button>
+          </div>
+        </div>
+
+        <aside class="summary">
+          <h2>Resumen del pedido</h2>
+          <p class="summary-units">{{ units() }} {{ units() === 1 ? 'unidad' : 'unidades' }}</p>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="price">{{ formatPrice(total()) }}</span>
+          </div>
+
+          <fieldset class="pay-methods">
+            <legend>Medio de pago</legend>
+            @for (option of paymentOptions; track option.value) {
+              <label class="pay-option" [class.selected]="paymentMethod() === option.value">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  [value]="option.value"
+                  [checked]="paymentMethod() === option.value"
+                  (change)="paymentMethod.set(option.value)"
+                />
+                {{ option.label }}
+              </label>
+            }
+          </fieldset>
+
+          <button class="buy" [disabled]="buying() || !paymentMethod()" (click)="checkout()">
+            {{ buying() ? 'Procesando…' : 'Comprar' }}
+          </button>
+          @if (!paymentMethod()) {
+            <p class="summary-hint">Elegí un medio de pago para continuar.</p>
+          }
+          <p class="summary-note">Pago simulado: no se realiza ningún cobro real.</p>
+        </aside>
+      </div>
     }
   </section>
 }
