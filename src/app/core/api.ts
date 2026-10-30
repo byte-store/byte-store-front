@@ -49,6 +49,13 @@ export interface Cart {
 }
 
 export type PaymentMethod = 'MERCADO_PAGO' | 'NARANJA_X' | 'TARJETA';
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  MERCADO_PAGO: 'Mercado Pago',
+  NARANJA_X: 'Naranja X',
+  TARJETA: 'Tarjeta de crédito o débito',
+};
+
 export interface OrderItem {
   id: number;
   orderId: number;
@@ -66,6 +73,16 @@ export interface Order {
   createdAt: string;
   items: OrderItem[];
 }
+
+export interface OrderItemDetail extends OrderItem {
+  brand: string;
+  model: string;
+}
+
+export interface OrderWithProducts extends Omit<Order, 'items'> {
+  items: OrderItemDetail[];
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -156,12 +173,16 @@ export class ApiService {
   clearCart(userId: number) {
     return this.request<Cart>('DELETE', `/carts/${userId}/items`);
   }
-  
+
   // Órdenes
   checkout(paymentMethod: PaymentMethod) {
     return this.request<Order>('POST', '/orders', { paymentMethod });
   }
-} 
+
+  getMyOrders() {
+    return this.request<OrderWithProducts[]>('GET', '/orders');
+  }
+}
 
 export function formatPrice(n: number): string {
   return n.toLocaleString('es-AR', {
@@ -169,6 +190,10 @@ export function formatPrice(n: number): string {
     currency: 'ARS',
     minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
   });
+}
+
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' });
 }
 
 export function errorMessage(e: unknown): string {
