@@ -6,17 +6,17 @@ import {
   CartItem,
   errorMessage,
   formatPrice,
+  PAYMENT_METHOD_LABELS,
   PaymentMethod,
   Product,
 } from '../../core/api';
 import { AuthService } from '../../core/auth';
 import { Alert } from '../../shared/alert';
 
-const PAYMENT_OPTIONS: { value: PaymentMethod; label: string }[] = [
-  { value: 'MERCADO_PAGO', label: 'Mercado Pago' },
-  { value: 'NARANJA_X', label: 'Naranja X' },
-  { value: 'TARJETA', label: 'Tarjeta de crédito o débito' },
-];
+const PAYMENT_OPTIONS = (Object.keys(PAYMENT_METHOD_LABELS) as PaymentMethod[]).map((value) => ({
+  value,
+  label: PAYMENT_METHOD_LABELS[value],
+}));
 
 @Component({
   selector: 'app-cart-page',
@@ -84,7 +84,7 @@ export class CartPage implements OnInit {
   }
 
   protected paymentLabel(method: PaymentMethod): string {
-    return PAYMENT_OPTIONS.find((o) => o.value === method)?.label ?? method;
+    return PAYMENT_METHOD_LABELS[method] ?? method;
   }
 
   protected step(item: CartItem, delta: number) {
