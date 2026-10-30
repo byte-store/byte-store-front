@@ -48,6 +48,7 @@ export interface Cart {
   items: CartItem[];
 }
 
+export type PaymentMethod = 'MERCADO_PAGO' | 'NARANJA_X' | 'TARJETA';
 export interface OrderItem {
   id: number;
   orderId: number;
@@ -61,6 +62,7 @@ export interface Order {
   userId: number;
   totalAmount: number;
   status: 'COMPLETED' | 'CANCELLED';
+  paymentMethod: PaymentMethod;
   createdAt: string;
   items: OrderItem[];
 }
@@ -156,10 +158,10 @@ export class ApiService {
   }
   
   // Órdenes
-  checkout() {
-    return this.request<Order>('POST', '/orders');
+  checkout(paymentMethod: PaymentMethod) {
+    return this.request<Order>('POST', '/orders', { paymentMethod });
   }
-}
+} 
 
 export function formatPrice(n: number): string {
   return n.toLocaleString('es-AR', {
