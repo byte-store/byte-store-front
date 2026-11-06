@@ -1,0 +1,12 @@
+.tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: #e1e5ec;
+  border-radius: var(--radius);
+}
+.tabs button { background: transparent; border-color: transparent; color: var(--ink); }
+.tabs button:hover:not(:disabled) { background: #d3d9e3; border-color: transparent; }
+.tabs button.active,
+.tabs button.active:hover:not(:disabled) { background: var(--surface); border-color: var(--line); }
