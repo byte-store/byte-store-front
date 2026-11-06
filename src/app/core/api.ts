@@ -48,6 +48,41 @@ export interface Cart {
   items: CartItem[];
 }
 
+export type PaymentMethod = 'MERCADO_PAGO' | 'NARANJA_X' | 'TARJETA';
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  MERCADO_PAGO: 'Mercado Pago',
+  NARANJA_X: 'Naranja X',
+  TARJETA: 'Tarjeta de crédito o débito',
+};
+
+export interface OrderItem {
+  id: number;
+  orderId: number;
+  productId: number;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface Order {
+  id: number;
+  userId: number;
+  totalAmount: number;
+  status: 'COMPLETED' | 'CANCELLED';
+  paymentMethod: PaymentMethod;
+  createdAt: string;
+  items: OrderItem[];
+}
+
+export interface OrderItemDetail extends OrderItem {
+  brand: string;
+  model: string;
+}
+
+export interface OrderWithProducts extends Omit<Order, 'items'> {
+  items: OrderItemDetail[];
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -115,6 +150,9 @@ export class ApiService {
   createProduct(data: CreateProductDto) {
     return this.request<Product>('POST', '/products', data);
   }
+  updateProduct(id: number, data: Partial<CreateProductDto>) {
+    return this.request<Product>('PUT', `/products/${id}`, data);
+  }
   deleteProduct(id: number) {
     return this.request<{ message: string; product: Product }>('DELETE', `/products/${id}`);
   }
@@ -135,10 +173,27 @@ export class ApiService {
   clearCart(userId: number) {
     return this.request<Cart>('DELETE', `/carts/${userId}/items`);
   }
+
+  // Órdenes
+  checkout(paymentMethod: PaymentMethod) {
+    return this.request<Order>('POST', '/orders', { paymentMethod });
+  }
+
+  getMyOrders() {
+    return this.request<OrderWithProducts[]>('GET', '/orders');
+  }
 }
 
 export function formatPrice(n: number): string {
-  return n.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+  return n.toLocaleString('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+  });
+}
+
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' });
 }
 
 export function errorMessage(e: unknown): string {

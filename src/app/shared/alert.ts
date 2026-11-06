@@ -2,6 +2,7 @@ import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-alert',
+  styleUrl: './alert.css',
   template: `
     @if (message()) {
       <div class="alert alert-{{ kind() }}">{{ message() }}</div>

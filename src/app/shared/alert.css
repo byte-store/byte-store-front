@@ -1,0 +1,9 @@
+.alert {
+  padding: 12px 14px;
+  border: 1px solid;
+  border-left-width: 5px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.alert-error { background: #fbeceb; color: #8f231b; border-color: #e9b7b3; border-left-color: var(--danger); }
+.alert-success { background: #e7f4ec; color: #165a34; border-color: #b5dbc4; border-left-color: var(--ok); }

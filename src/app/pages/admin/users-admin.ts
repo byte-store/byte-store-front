@@ -7,6 +7,7 @@ import { Alert } from '../../shared/alert';
   selector: 'app-users-admin',
   imports: [Alert],
   templateUrl: './users-admin.html',
+  styleUrl: './users-admin.css',
 })
 export class UsersAdmin implements OnInit {
   private readonly api = inject(ApiService);

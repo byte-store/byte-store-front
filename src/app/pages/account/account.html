@@ -1,36 +1,95 @@
 @if (user(); as user) {
-  <section class="narrow">
+  <section>
     <h1>Mi cuenta</h1>
     <p class="muted">Rol: {{ user.role }}</p>
-    <app-alert kind="error" [message]="error()" />
-    <app-alert kind="success" [message]="notice()" />
 
-    <form ngNativeValidate (ngSubmit)="onSubmit()" class="form box">
-      <label>
-        Nombre
-        <input name="name" required minlength="3" maxlength="150" [(ngModel)]="name" />
-      </label>
-      <label>
-        Email
-        <input type="email" name="email" required maxlength="150" [(ngModel)]="email" />
-      </label>
-      <label>
-        Nueva contraseña
-        <input
-          type="password"
-          name="password"
-          minlength="8"
-          placeholder="Dejar vacío para no cambiarla"
-          [(ngModel)]="password"
-        />
-      </label>
-      <button>Guardar cambios</button>
-    </form>
+    <div class="account-layout">
+      <div class="account-profile">
+        <app-alert kind="error" [message]="error()" />
+        <app-alert kind="success" [message]="notice()" />
 
-    <div class="box">
-      <h3>Eliminar cuenta</h3>
-      <p class="muted">Se borran tus datos y tu carrito.</p>
-      <button class="danger" (click)="onDelete()">Eliminar mi cuenta</button>
+        <form ngNativeValidate (ngSubmit)="onSubmit()" class="form box">
+          <label>
+            Nombre
+            <input name="name" required minlength="3" maxlength="150" [(ngModel)]="name" />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" required maxlength="150" [(ngModel)]="email" />
+          </label>
+          <label>
+            Nueva contraseña
+            <input
+              type="password"
+              name="password"
+              minlength="8"
+              placeholder="Dejar vacío para no cambiarla"
+              [(ngModel)]="password"
+            />
+          </label>
+          <button>Guardar cambios</button>
+        </form>
+
+        <div class="box">
+          <h3>Eliminar cuenta</h3>
+          @if (orders().length > 0) {
+            <p class="muted">
+              Tu cuenta tiene compras registradas, así que no se puede eliminar: el historial
+              de ventas se conserva.
+            </p>
+            <button class="danger" disabled>Eliminar mi cuenta</button>
+          } @else {
+            <p class="muted">Se borran tus datos y tu carrito.</p>
+            <button class="danger" [disabled]="ordersLoading()" (click)="onDelete()">
+              Eliminar mi cuenta
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="account-orders">
+        <h2>Mis compras</h2>
+
+        @if (ordersLoading()) {
+          <p class="muted">Cargando compras…</p>
+        } @else if (ordersError()) {
+          <app-alert kind="error" [message]="ordersError()" />
+        } @else if (orders().length === 0) {
+          <div class="orders-empty">
+            <p>Todavía no hiciste ninguna compra.</p>
+            <a routerLink="/">Ir al catálogo</a>
+          </div>
+        } @else {
+          @for (order of orders(); track order.id) {
+            <details class="order" [open]="$first">
+              <summary>
+                <span class="order-id">Orden #{{ order.id }}</span>
+                <span class="order-meta">
+                  <span class="order-date muted">{{ formatDate(order.createdAt) }}</span>
+                  <span class="order-pay">{{ paymentLabels[order.paymentMethod] }}</span>
+                </span>
+                <span class="price">{{ formatPrice(order.totalAmount) }}</span>
+              </summary>
+
+              <ul class="order-items">
+                @for (item of order.items; track item.id) {
+                  <li>
+                    <span class="order-qty">{{ item.quantity }} ×</span>
+                    <span>
+                      {{ item.brand }} {{ item.model }}
+                      <span class="order-unit muted">{{ formatPrice(item.unitPrice) }} c/u</span>
+                    </span>
+                    <span class="order-sub">{{ formatPrice(item.unitPrice * item.quantity) }}</span>
+                  </li>
+                }
+              </ul>
+              <p class="order-foot muted">
+                {{ units(order) }} {{ units(order) === 1 ? 'unidad' : 'unidades' }}
+              </p>
+            </details>
+          }
+        }
+      </div>
     </div>
   </section>
 } @else if (error()) {

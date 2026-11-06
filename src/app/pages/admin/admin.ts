@@ -5,6 +5,7 @@ import { UsersAdmin } from './users-admin';
 @Component({
   selector: 'app-admin-page',
   imports: [ProductsAdmin, UsersAdmin],
+  styleUrl: './admin.css',
   template: `
     <section>
       <h1>Panel de administración</h1>

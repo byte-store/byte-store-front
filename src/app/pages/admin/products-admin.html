@@ -1,8 +1,8 @@
 <app-alert kind="error" [message]="error()" />
 <app-alert kind="success" [message]="notice()" />
 
-<form ngNativeValidate (ngSubmit)="onCreate()" class="form box">
-  <h3>Nuevo producto</h3>
+<form ngNativeValidate (ngSubmit)="onSubmit()" class="form box">
+  <h3>{{ editingId() === null ? 'Nuevo producto' : 'Editar producto #' + editingId() }}</h3>
   <label>
     Marca *
     <input name="brand" required maxlength="80" [(ngModel)]="brand" />
@@ -31,7 +31,12 @@
     Descripción
     <textarea name="description" rows="3" [(ngModel)]="description"></textarea>
   </label>
-  <button>Crear producto</button>
+  <div class="row">
+    <button>{{ editingId() === null ? 'Crear producto' : 'Guardar cambios' }}</button>
+    @if (editingId() !== null) {
+      <button type="button" class="secondary" (click)="resetForm()">Cancelar</button>
+    }
+  </div>
 </form>
 
 <table>
@@ -51,7 +56,12 @@
         <td>{{ p.brand }} {{ p.model }}</td>
         <td>{{ formatPrice(p.price) }}</td>
         <td>{{ p.stock }}</td>
-        <td><button class="danger" (click)="onDelete(p)">Eliminar</button></td>
+        <td>
+          <div class="row">
+            <button class="secondary" (click)="onEdit(p)">Editar</button>
+            <button class="danger" (click)="onDelete(p)">Eliminar</button>
+          </div>
+        </td>
       </tr>
     } @empty {
       <tr>

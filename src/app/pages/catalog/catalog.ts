@@ -8,6 +8,7 @@ import { Alert } from '../../shared/alert';
   selector: 'app-catalog-page',
   imports: [Alert],
   templateUrl: './catalog.html',
+  styleUrl: './catalog.css',
 })
 export class CatalogPage implements OnInit {
   private readonly api = inject(ApiService);
