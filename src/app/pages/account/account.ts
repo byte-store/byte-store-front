@@ -17,6 +17,7 @@ import { Alert } from '../../shared/alert';
   selector: 'app-account-page',
   imports: [FormsModule, RouterLink, Alert],
   templateUrl: './account.html',
+  styleUrl: './account.css',
 })
 export class AccountPage implements OnInit {
   private readonly api = inject(ApiService);

@@ -7,6 +7,7 @@ import { Alert } from '../../shared/alert';
   selector: 'app-products-admin',
   imports: [FormsModule, Alert],
   templateUrl: './products-admin.html',
+  styleUrl: './products-admin.css',
 })
 export class ProductsAdmin implements OnInit {
   private readonly api = inject(ApiService);

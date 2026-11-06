@@ -22,6 +22,7 @@ const PAYMENT_OPTIONS = (Object.keys(PAYMENT_METHOD_LABELS) as PaymentMethod[]).
   selector: 'app-cart-page',
   imports: [RouterLink, Alert],
   templateUrl: './cart.html',
+  styleUrl: './cart.css',
 })
 export class CartPage implements OnInit {
   private readonly api = inject(ApiService);
